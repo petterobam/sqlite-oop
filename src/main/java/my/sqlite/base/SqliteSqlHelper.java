@@ -327,10 +327,9 @@ public class SqliteSqlHelper<T extends SqliteBaseEntity> {
      */
     public String getTableName() {
         if (SqliteUtils.isBlank(this.tableName)) {
-            Class<?> clazz = targetClass.getClass();
-            this.tableName = getTableNameForClass(clazz);
+            this.tableName = this.getTableNameForClass(this.targetClass);
         }
-        return tableName;
+        return this.tableName;
     }
 
     /**
@@ -339,7 +338,7 @@ public class SqliteSqlHelper<T extends SqliteBaseEntity> {
      * @param clazz
      * @return
      */
-    public String getTableNameForClass(Class<?> clazz) {
+    public String getTableNameForClass(Class<T> clazz) {
         String tableName;
         SqliteTable table = clazz.getAnnotation(SqliteTable.class);
         if (null != table) {

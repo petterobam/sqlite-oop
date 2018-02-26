@@ -10,7 +10,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 ;
@@ -289,6 +291,19 @@ public class SqliteUtils {
         }
         jsonBuf.append("]");
         return jsonBuf.toString();
+    }
+
+    /**
+     * 将日期时间对象转为 指定格式的字符串
+     *
+     * @param format
+     * @return string
+     */
+    public static String nowFormatStr(String format) {
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        Date currentTime = new Date();
+        String dateString = formatter.format(currentTime);
+        return dateString;
     }
 
     /**

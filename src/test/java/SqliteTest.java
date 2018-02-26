@@ -59,4 +59,5 @@ public class SqliteTest {
         TestTableService sqliteService = new TestTableService();//没有使用spring注入，暂时自己构建
         List<TestTable> list = sqliteService.getByNameOrId("title", 1);
     }
+    //TODO 测试自定义注解，测试数据库函数和过程
 }

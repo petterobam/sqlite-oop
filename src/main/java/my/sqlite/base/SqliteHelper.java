@@ -20,9 +20,26 @@ import java.util.Map;
  * @author 欧阳洁
  * @create 2017-09-29 17:48
  **/
-public class SqliteHelper {
-    private static final String DB_PATH = SqliteUtils.getClassRootPath(SqliteConfig.DB_PATH);
+public class SqliteHelper<T extends SqliteBaseEntity> {
     private static final String TEST_DB_PATH = SqliteUtils.getClassRootPath(SqliteConfig.TEST_DB_PATH);
+
+    private String dbPath;//数据库路径
+    private int dbType;//数据库类型
+
+    /**
+     * 构造函数
+     *
+     * @param targetClass
+     */
+    public SqliteHelper(Class<T> targetClass) {
+        this.dbPath = SqliteConfig.DB_PATH;
+        this.dbType = SqliteConfig.DB_TYPE_DEFAULT;
+        SqliteTable sqliteTable = targetClass.getAnnotation(SqliteTable.class);
+        if (null != sqliteTable) {
+            this.dbPath = sqliteTable.dbPath();
+            this.dbType = sqliteTable.dbType();
+        }
+    }
 
     static {//加载驱动器
         try {
@@ -39,8 +56,8 @@ public class SqliteHelper {
      * @param sql
      * @return
      */
-    public static int insert(String sql) {
-        return execute(sql);
+    public int insert(String sql) {
+        return this.execute(sql);
     }
 
     /**
@@ -49,8 +66,8 @@ public class SqliteHelper {
      * @param sql
      * @return
      */
-    public static int update(String sql) {
-        return execute(sql);
+    public int update(String sql) {
+        return this.execute(sql);
     }
 
     /**
@@ -59,8 +76,8 @@ public class SqliteHelper {
      * @param sql
      * @return
      */
-    public static int delete(String sql) {
-        return execute(sql);
+    public int delete(String sql) {
+        return this.execute(sql);
     }
 
     /**
@@ -69,8 +86,8 @@ public class SqliteHelper {
      * @param sql
      * @return
      */
-    public static int insert(String sql, List<Object> param) {
-        return execute(sql, param);
+    public int insert(String sql, List<Object> param) {
+        return this.execute(sql, param);
     }
 
     /**
@@ -79,8 +96,8 @@ public class SqliteHelper {
      * @param sql
      * @return
      */
-    public static int update(String sql, List<Object> param) {
-        return execute(sql, param);
+    public int update(String sql, List<Object> param) {
+        return this.execute(sql, param);
     }
 
     /**
@@ -89,8 +106,8 @@ public class SqliteHelper {
      * @param sql
      * @return
      */
-    public static int delete(String sql, List<Object> param) {
-        return execute(sql, param);
+    public int delete(String sql, List<Object> param) {
+        return this.execute(sql, param);
     }
 
     /**
@@ -99,10 +116,52 @@ public class SqliteHelper {
      * @param sql
      * @return
      */
-    public static int create(String sql) {
-        return execute(sql);
+    public int create(String sql) {
+        return this.execute(sql);
     }
 
+    /**
+     * 数据库连接获取
+     *
+     * @return
+     */
+    private String getDBUrl() {
+        StringBuffer currentDbPathSb = new StringBuffer(SqliteUtils.getClassRootPath(this.dbPath));
+        switch (this.dbType) {
+            case SqliteConfig.DB_TYPE_BY_MINUTE:
+                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyyMMddHHmm"));
+                break;
+            case SqliteConfig.DB_TYPE_BY_HOUR:
+                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyyMMddHH"));
+                break;
+            case SqliteConfig.DB_TYPE_BY_DAY:
+                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyyMMdd"));
+                break;
+            case SqliteConfig.DB_TYPE_BY_MOUTH:
+                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyyMM"));
+                break;
+            case SqliteConfig.DB_TYPE_BY_YEAR:
+                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyy"));
+                break;
+            default:
+                break;
+        }
+        String currentDbPath = currentDbPathSb.toString();
+        String JDBC_URL = null;
+        if (SqliteUtils.isWindows()) {
+            JDBC_URL = "jdbc:sqlite:/" + currentDbPath.toLowerCase();
+        } else {
+            JDBC_URL = "jdbc:sqlite:/" + currentDbPath;
+        }
+        return JDBC_URL;
+    }
+
+    /**
+     * 获取固定格式的数据库路径信息
+     *
+     * @param dbPath
+     * @return
+     */
     private static String getDBUrl(String dbPath) {
         String JDBC = "jdbc:sqlite:/" + dbPath;
         if (SqliteUtils.isWindows()) {
@@ -118,17 +177,17 @@ public class SqliteHelper {
      * @param sql
      * @return
      */
-    public static String query(String sql, Map<String, String> columnMap) {
+    public String query(String sql, Map<String, String> columnMap) {
         Connection connection = null;
         try {
             // create a database connection
-            connection = DriverManager.getConnection(getDBUrl(DB_PATH));
+            connection = DriverManager.getConnection(this.getDBUrl());
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(300); // set timeout to 30 sec.
             System.out.println("执行查询语句==> " + sql);
             ResultSet rs = statement.executeQuery(sql);
 
-            return getDataJson(rs, columnMap);
+            return this.getDataJson(rs, columnMap);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -147,11 +206,11 @@ public class SqliteHelper {
      * @param sql
      * @return
      */
-    public static String query(String sql, List<Object> param, Map<String, String> columnMap) {
+    public String query(String sql, List<Object> param, Map<String, String> columnMap) {
         Connection connection = null;
         try {
             // create a database connection
-            connection = DriverManager.getConnection(getDBUrl(DB_PATH));
+            connection = DriverManager.getConnection(this.getDBUrl());
             System.out.println("执行查询语句==> " + sql);
             PreparedStatement prep = connection.prepareStatement(sql);
             prep.setQueryTimeout(300);
@@ -164,7 +223,7 @@ public class SqliteHelper {
 
             ResultSet rs = prep.executeQuery();
 
-            return getDataJson(rs, columnMap);
+            return this.getDataJson(rs, columnMap);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -183,11 +242,11 @@ public class SqliteHelper {
      * @param sql
      * @return
      */
-    public static int execute(String sql, List<Object> param) {
+    public int execute(String sql, List<Object> param) {
         Connection connection = null;
         try {
             // create a database connection
-            connection = DriverManager.getConnection(getDBUrl(DB_PATH));
+            connection = DriverManager.getConnection(this.getDBUrl());
             System.out.println("执行非查询语句==> " + sql);
             PreparedStatement prep = connection.prepareStatement(sql);
             prep.setQueryTimeout(30);
@@ -218,11 +277,11 @@ public class SqliteHelper {
      * @param sql
      * @return
      */
-    public static int execute(String sql) {
+    public int execute(String sql) {
         Connection connection = null;
         try {
             // create a database connection
-            connection = DriverManager.getConnection(getDBUrl(DB_PATH));
+            connection = DriverManager.getConnection(this.getDBUrl());
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30); // set timeout to 30 sec.
             System.out.println("执行非查询语句==> " + sql);
@@ -248,7 +307,7 @@ public class SqliteHelper {
      * @return
      * @throws SQLException
      */
-    public static String getDataJson(ResultSet rs, Map<String, String> columnMap) throws SQLException {
+    public String getDataJson(ResultSet rs, Map<String, String> columnMap) throws SQLException {
         String[] nameArr = null;
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         int rows = 1;
@@ -277,7 +336,7 @@ public class SqliteHelper {
      * @return
      * @throws SQLException
      */
-    public static String[] getNameArr(ResultSet rs) throws SQLException {
+    public String[] getNameArr(ResultSet rs) throws SQLException {
         ResultSetMetaData rsmd = rs.getMetaData();
         int count = rsmd.getColumnCount();
         String[] nameArr = new String[count];

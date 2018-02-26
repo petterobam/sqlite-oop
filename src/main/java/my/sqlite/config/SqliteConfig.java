@@ -17,6 +17,13 @@ public class SqliteConfig {
      * 测试数据库
      */
     public static final String TEST_DB_PATH = SqliteUtils.getClassRootPath("database/test.db");
-
-
+    /**
+     * 程序数据库动态生成规则
+     */
+    public static final int DB_TYPE_DEFAULT = 0;
+    public static final int DB_TYPE_BY_MINUTE = 1;
+    public static final int DB_TYPE_BY_HOUR = 2;
+    public static final int DB_TYPE_BY_DAY = 3;
+    public static final int DB_TYPE_BY_MOUTH = 4;
+    public static final int DB_TYPE_BY_YEAR = 5;
 }

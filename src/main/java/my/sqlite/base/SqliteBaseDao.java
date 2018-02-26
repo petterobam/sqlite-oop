@@ -1,5 +1,7 @@
 package my.sqlite.base;
 
+import my.sqlite.config.SqliteConfig;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +17,13 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
     private String tableName;
     private Class entityClazz;
     private SqliteSqlHelper sqlHelper;
+    private SqliteHelper sqliteHelper;
 
     public SqliteBaseDao(Class<T> entityClass) {
+        this.entityClazz = entityClass;
         this.sqlHelper = new SqliteSqlHelper(entityClass);
         this.tableName = this.sqlHelper.getTableName();
-        this.entityClazz = entityClass;
+        this.sqliteHelper = new SqliteHelper(entityClass);
         //调用该方法就能在使用时检查和创建表，可以通过配置信息判断是否执调用，达到开关控制的效果
         this.existOrCreateTable();
     }
@@ -29,7 +33,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
      */
     public void existOrCreateTable() {
         String sql = this.sqlHelper.createTableSql();
-        SqliteHelper.execute(sql);
+        this.sqliteHelper.execute(sql);
     }
 
     /**
@@ -39,7 +43,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
      * @return
      */
     public int insert(String sql) {
-        return SqliteHelper.insert(sql);
+        return this.sqliteHelper.insert(sql);
     }
 
     /**
@@ -49,7 +53,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
      * @return
      */
     public int update(String sql) {
-        return SqliteHelper.update(sql);
+        return this.sqliteHelper.update(sql);
     }
 
     /**
@@ -59,7 +63,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
      * @return
      */
     public int delete(String sql) {
-        return SqliteHelper.delete(sql);
+        return this.sqliteHelper.delete(sql);
     }
 
     /**
@@ -69,7 +73,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
      * @return
      */
     public List<T> query(String sql) {
-        String jsonStr = SqliteHelper.query(sql, this.getColumMap());
+        String jsonStr = this.sqliteHelper.query(sql, this.getColumMap());
         if (jsonStr == null) return null;
         List<T> result = SqliteUtils.getInstance(jsonStr, this.entityClazz);
         return result;
@@ -84,7 +88,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
      */
     public int insert(T entity) {
         this.sqlHelper.createInsert(entity);
-        return SqliteHelper.insert(entity.getCurrentSql(), entity.getCurrentParam());
+        return this.sqliteHelper.insert(entity.getCurrentSql(), entity.getCurrentParam());
     }
 
     /**
@@ -95,7 +99,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
      */
     public int update(T entity) {
         this.sqlHelper.createUpdate(entity);
-        return SqliteHelper.update(entity.getCurrentSql(), entity.getCurrentParam());
+        return this.sqliteHelper.update(entity.getCurrentSql(), entity.getCurrentParam());
     }
 
     /**
@@ -106,7 +110,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
      */
     public int delete(T entity) {
         this.sqlHelper.createDelete(entity);
-        return SqliteHelper.delete(entity.getCurrentSql(), entity.getCurrentParam());
+        return this.sqliteHelper.delete(entity.getCurrentSql(), entity.getCurrentParam());
     }
 
     /**
@@ -119,7 +123,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
         String sql = this.sqlHelper.createDeleteById(id);
         List<Object> param = new ArrayList<Object>(1);
         param.add(id);
-        return SqliteHelper.delete(sql, param);
+        return this.sqliteHelper.delete(sql, param);
     }
 
     /**
@@ -130,7 +134,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
      */
     public List<T> query(T entity) {
         this.sqlHelper.createSelect(entity);
-        String jsonStr = SqliteHelper.query(entity.getCurrentSql(), entity.getCurrentParam(), this.getColumMap());
+        String jsonStr = this.sqliteHelper.query(entity.getCurrentSql(), entity.getCurrentParam(), this.getColumMap());
         if (jsonStr == null) return null;
         List<T> result = SqliteUtils.getInstance(jsonStr, entity.getClass());
         return result;
@@ -146,7 +150,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
         String sql = this.sqlHelper.createSelectById(id);
         List<Object> param = new ArrayList<Object>(1);
         param.add(id);
-        String jsonStr = SqliteHelper.query(sql, param, this.getColumMap());
+        String jsonStr = this.sqliteHelper.query(sql, param, this.getColumMap());
         if (jsonStr == null) return null;
         List<T> result = SqliteUtils.getInstance(jsonStr, this.entityClazz);
         if (SqliteUtils.isNotEmpty(result)) {
@@ -166,7 +170,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
         //[0]为getStackTrace方法，[1]当前的excuteQuery方法，[2]为调用excuteQuery方法的方法
         StackTraceElement parrentMethodInfo = Thread.currentThread().getStackTrace()[2];// [2]该结果不可能为空
         this.sqlHelper.convertSelfSql(parrentMethodInfo, entity);
-        String jsonStr = SqliteHelper.query(entity.getCurrentSql(), entity.getCurrentParam(), this.getColumMap());
+        String jsonStr = this.sqliteHelper.query(entity.getCurrentSql(), entity.getCurrentParam(), this.getColumMap());
         if (jsonStr == null) return null;
         List<T> result = SqliteUtils.getInstance(jsonStr, entity.getClass());
         if (SqliteUtils.isNotEmpty(result)) {
@@ -192,7 +196,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
                 paramList.add(o);
             }
         }
-        String jsonStr = SqliteHelper.query(sql, paramList, this.getColumMap());
+        String jsonStr = this.sqliteHelper.query(sql, paramList, this.getColumMap());
         if (jsonStr == null) return null;
         List<T> result = SqliteUtils.getInstance(jsonStr, this.entityClazz);
         if (SqliteUtils.isNotEmpty(result)) {
@@ -218,7 +222,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
                 paramList.add(o);
             }
         }
-        return SqliteHelper.execute(sql, paramList);
+        return this.sqliteHelper.execute(sql, paramList);
     }
 
     /**
@@ -231,7 +235,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
         //[0]为getStackTrace方法，[1]当前的excute方法，[2]为调用excute方法的方法
         StackTraceElement parrentMethodInfo = Thread.currentThread().getStackTrace()[2];// [2]该结果不可能为空
         this.sqlHelper.convertSelfSql(parrentMethodInfo, entity);
-        return SqliteHelper.execute(entity.getCurrentSql(), entity.getCurrentParam());
+        return this.sqliteHelper.execute(entity.getCurrentSql(), entity.getCurrentParam());
     }
 
     public String getTableName() {
