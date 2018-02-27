@@ -1,7 +1,5 @@
 package my.sqlite.config;
 
-import my.sqlite.base.SqliteUtils;
-
 /**
  * sqlite的一些静态配置
  */

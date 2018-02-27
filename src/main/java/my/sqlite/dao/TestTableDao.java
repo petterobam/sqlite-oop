@@ -1,7 +1,7 @@
 package my.sqlite.dao;
 
 import my.sqlite.base.SqliteBaseDao;
-import my.sqlite.base.SqliteSql;
+import my.sqlite.annotation.SqliteSql;
 import my.sqlite.entity.TestTable;
 
 import java.util.List;

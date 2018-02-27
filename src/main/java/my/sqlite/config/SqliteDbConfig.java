@@ -1,7 +1,6 @@
 package my.sqlite.config;
 
-import my.sqlite.base.SqliteSql;
-import my.sqlite.base.SqliteUtils;
+import my.sqlite.utils.SqliteUtils;
 
 public enum SqliteDbConfig {
     /**

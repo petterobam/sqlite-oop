@@ -1,6 +1,8 @@
 package my.sqlite.base;
 
-import my.sqlite.config.SqliteConfig;
+import my.sqlite.utils.SqliteHelper;
+import my.sqlite.utils.SqliteSqlHelper;
+import my.sqlite.utils.SqliteUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -263,6 +265,6 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
     }
 
     public Map<String, String> getColumMap() {
-        return this.sqlHelper.columnMap;
+        return this.sqlHelper.getColumnMap();
     }
 }

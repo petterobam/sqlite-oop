@@ -1,4 +1,4 @@
-import my.sqlite.base.SqliteHelper;
+import my.sqlite.utils.SqliteHelper;
 import my.sqlite.entity.TestSpliteSqlite;
 import my.sqlite.entity.TestTable;
 import my.sqlite.service.TestSpliteSqliteService;

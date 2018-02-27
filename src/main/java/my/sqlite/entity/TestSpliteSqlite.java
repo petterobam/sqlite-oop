@@ -1,10 +1,10 @@
 package my.sqlite.entity;
 
 import my.sqlite.base.SqliteBaseEntity;
-import my.sqlite.base.SqliteColumn;
-import my.sqlite.base.SqliteID;
-import my.sqlite.base.SqliteTable;
-import my.sqlite.base.SqliteTransient;
+import my.sqlite.annotation.SqliteColumn;
+import my.sqlite.annotation.SqliteID;
+import my.sqlite.annotation.SqliteTable;
+import my.sqlite.annotation.SqliteTransient;
 import my.sqlite.config.SqliteConfig;
 
 /**
