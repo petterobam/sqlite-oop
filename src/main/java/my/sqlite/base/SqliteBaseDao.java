@@ -73,7 +73,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
      * @return
      */
     public List<T> query(String sql) {
-        String jsonStr = this.sqliteHelper.query(sql, this.getColumMap());
+        String jsonStr = this.sqliteHelper.queryJsonResult(sql, this.getColumMap());
         if (jsonStr == null) return null;
         List<T> result = SqliteUtils.getInstance(jsonStr, this.entityClazz);
         return result;
@@ -134,7 +134,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
      */
     public List<T> query(T entity) {
         this.sqlHelper.createSelect(entity);
-        String jsonStr = this.sqliteHelper.query(entity.getCurrentSql(), entity.getCurrentParam(), this.getColumMap());
+        String jsonStr = this.sqliteHelper.queryJsonResult(entity.getCurrentSql(), entity.getCurrentParam(), this.getColumMap());
         if (jsonStr == null) return null;
         List<T> result = SqliteUtils.getInstance(jsonStr, entity.getClass());
         return result;
@@ -150,7 +150,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
         String sql = this.sqlHelper.createSelectById(id);
         List<Object> param = new ArrayList<Object>(1);
         param.add(id);
-        String jsonStr = this.sqliteHelper.query(sql, param, this.getColumMap());
+        String jsonStr = this.sqliteHelper.queryJsonResult(sql, param, this.getColumMap());
         if (jsonStr == null) return null;
         List<T> result = SqliteUtils.getInstance(jsonStr, this.entityClazz);
         if (SqliteUtils.isNotEmpty(result)) {
@@ -170,7 +170,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
         //[0]为getStackTrace方法，[1]当前的excuteQuery方法，[2]为调用excuteQuery方法的方法
         StackTraceElement parrentMethodInfo = Thread.currentThread().getStackTrace()[2];// [2]该结果不可能为空
         this.sqlHelper.convertSelfSql(parrentMethodInfo, entity);
-        String jsonStr = this.sqliteHelper.query(entity.getCurrentSql(), entity.getCurrentParam(), this.getColumMap());
+        String jsonStr = this.sqliteHelper.queryJsonResult(entity.getCurrentSql(), entity.getCurrentParam(), this.getColumMap());
         if (jsonStr == null) return null;
         List<T> result = SqliteUtils.getInstance(jsonStr, entity.getClass());
         if (SqliteUtils.isNotEmpty(result)) {
@@ -196,7 +196,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
                 paramList.add(o);
             }
         }
-        String jsonStr = this.sqliteHelper.query(sql, paramList, this.getColumMap());
+        String jsonStr = this.sqliteHelper.queryJsonResult(sql, paramList, this.getColumMap());
         if (jsonStr == null) return null;
         List<T> result = SqliteUtils.getInstance(jsonStr, this.entityClazz);
         if (SqliteUtils.isNotEmpty(result)) {

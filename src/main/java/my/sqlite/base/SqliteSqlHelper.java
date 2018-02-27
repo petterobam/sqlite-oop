@@ -339,17 +339,19 @@ public class SqliteSqlHelper<T extends SqliteBaseEntity> {
      * @return
      */
     public String getTableNameForClass(Class<T> clazz) {
-        String tableName;
+        if (!SqliteUtils.isBlank(this.tableName)) {
+            return this.tableName.toLowerCase();
+        }
         SqliteTable table = clazz.getAnnotation(SqliteTable.class);
         if (null != table) {
-            tableName = table.name();
+            this.tableName = table.name();
             if (SqliteUtils.isBlank(this.tableName)) {
-                tableName = clazz.getSimpleName();
+                this.tableName = clazz.getSimpleName();
             }
         } else {
-            tableName = clazz.getSimpleName();
+            this.tableName = clazz.getSimpleName();
         }
-        return tableName.toLowerCase();
+        return this.tableName.toLowerCase();
     }
 
     /**

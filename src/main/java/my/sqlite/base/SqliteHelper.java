@@ -20,7 +20,7 @@ import java.util.Map;
  * @author 欧阳洁
  * @create 2017-09-29 17:48
  **/
-public class SqliteHelper<T extends SqliteBaseEntity> {
+public class SqliteHelper {
     private static final String TEST_DB_PATH = SqliteUtils.getClassRootPath(SqliteConfig.TEST_DB_PATH);
 
     private String dbPath;//数据库路径
@@ -31,7 +31,7 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
      *
      * @param targetClass
      */
-    public SqliteHelper(Class<T> targetClass) {
+    public SqliteHelper(Class<?> targetClass) {
         this.dbPath = SqliteConfig.DB_PATH;
         this.dbType = SqliteConfig.DB_TYPE_DEFAULT;
         SqliteTable sqliteTable = targetClass.getAnnotation(SqliteTable.class);
@@ -39,6 +39,18 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
             this.dbPath = sqliteTable.dbPath();
             this.dbType = sqliteTable.dbType();
         }
+    }
+
+    /**
+     * 构造函数
+     *
+     * @param dbPath
+     */
+    public SqliteHelper(String dbPath) {
+        if(SqliteUtils.isBlank(dbPath)) {
+            this.dbPath = SqliteConfig.DB_PATH;
+        }
+        this.dbType = SqliteConfig.DB_TYPE_DEFAULT;
     }
 
     static {//加载驱动器
@@ -84,6 +96,7 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
      * 插入，带参数
      *
      * @param sql
+     * @param param
      * @return
      */
     public int insert(String sql, List<Object> param) {
@@ -94,6 +107,7 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
      * 修改，带参数
      *
      * @param sql
+     * @param param
      * @return
      */
     public int update(String sql, List<Object> param) {
@@ -104,6 +118,7 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
      * 删除，带参数
      *
      * @param sql
+     * @param param
      * @return
      */
     public int delete(String sql, List<Object> param) {
@@ -129,19 +144,19 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
         StringBuffer currentDbPathSb = new StringBuffer(SqliteUtils.getClassRootPath(this.dbPath));
         switch (this.dbType) {
             case SqliteConfig.DB_TYPE_BY_MINUTE:
-                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyyMMddHHmm"));
+                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyyMMddHHmm")).append(".db");
                 break;
             case SqliteConfig.DB_TYPE_BY_HOUR:
-                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyyMMddHH"));
+                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyyMMddHH")).append(".db");
                 break;
             case SqliteConfig.DB_TYPE_BY_DAY:
-                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyyMMdd"));
+                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyyMMdd")).append(".db");
                 break;
             case SqliteConfig.DB_TYPE_BY_MOUTH:
-                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyyMM"));
+                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyyMM")).append(".db");
                 break;
             case SqliteConfig.DB_TYPE_BY_YEAR:
-                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyy"));
+                currentDbPathSb.append(SqliteUtils.nowFormatStr("yyyy")).append(".db");
                 break;
             default:
                 break;
@@ -175,13 +190,15 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
      * 查询语句执行，返回list格式的json字符串
      *
      * @param sql
+     * @param columnMap
      * @return
      */
-    public String query(String sql, Map<String, String> columnMap) {
+    public String queryJsonResult(String sql, Map<String, String> columnMap) {
         Connection connection = null;
         try {
             // create a database connection
-            connection = DriverManager.getConnection(this.getDBUrl());
+            String JDBC_URL = this.getDBUrl();
+            connection = DriverManager.getConnection(JDBC_URL);
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(300); // set timeout to 30 sec.
             System.out.println("执行查询语句==> " + sql);
@@ -204,13 +221,16 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
      * 查询语句执行，返回list格式的json字符串，带参数
      *
      * @param sql
+     * @param param
+     * @param columnMap
      * @return
      */
-    public String query(String sql, List<Object> param, Map<String, String> columnMap) {
+    public String queryJsonResult(String sql, List<Object> param, Map<String, String> columnMap) {
         Connection connection = null;
         try {
             // create a database connection
-            connection = DriverManager.getConnection(this.getDBUrl());
+            String JDBC_URL = this.getDBUrl();
+            connection = DriverManager.getConnection(JDBC_URL);
             System.out.println("执行查询语句==> " + sql);
             PreparedStatement prep = connection.prepareStatement(sql);
             prep.setQueryTimeout(300);
@@ -235,18 +255,87 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
             }
         }
     }
+    /**
+     * 查询语句执行，返回list格式的json字符串
+     *
+     * @param sql
+     * @return
+     */
+    public List<Map<String,Object>> query(String sql) {
+        Connection connection = null;
+        try {
+            // create a database connection
+            String JDBC_URL = this.getDBUrl();
+            connection = DriverManager.getConnection(JDBC_URL);
+            Statement statement = connection.createStatement();
+            statement.setQueryTimeout(300); // set timeout to 30 sec.
+            System.out.println("执行查询语句==> " + sql);
+            ResultSet rs = statement.executeQuery(sql);
+
+            return this.getListMap(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 查询语句执行，返回list格式的json字符串，带参数
+     *
+     * @param sql
+     * @param param
+     * @return
+     */
+    public List<Map<String,Object>> query(String sql, List<Object> param) {
+        Connection connection = null;
+        try {
+            // create a database connection
+            String JDBC_URL = this.getDBUrl();
+            connection = DriverManager.getConnection(JDBC_URL);
+            System.out.println("执行查询语句==> " + sql);
+            PreparedStatement prep = connection.prepareStatement(sql);
+            prep.setQueryTimeout(300);
+            if (SqliteUtils.isNotEmpty(param)) {
+                int count = 1;
+                for (Object o : param) {
+                    prep.setObject(count++, o);
+                }
+            }
+
+            ResultSet rs = prep.executeQuery();
+
+            return this.getListMap(rs);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     /**
      * 非查询语句执行，带参数的
      *
      * @param sql
+     * @param param
      * @return
      */
     public int execute(String sql, List<Object> param) {
         Connection connection = null;
         try {
             // create a database connection
-            connection = DriverManager.getConnection(this.getDBUrl());
+            String JDBC_URL = this.getDBUrl();
+            connection = DriverManager.getConnection(JDBC_URL);
             System.out.println("执行非查询语句==> " + sql);
             PreparedStatement prep = connection.prepareStatement(sql);
             prep.setQueryTimeout(30);
@@ -281,7 +370,8 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
         Connection connection = null;
         try {
             // create a database connection
-            connection = DriverManager.getConnection(this.getDBUrl());
+            String JDBC_URL = this.getDBUrl();
+            connection = DriverManager.getConnection(JDBC_URL);
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30); // set timeout to 30 sec.
             System.out.println("执行非查询语句==> " + sql);
@@ -330,6 +420,60 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
     }
 
     /**
+     * 根据结果集返回数据json
+     *
+     * @param rs
+     * @return
+     * @throws SQLException
+     */
+    public String getDataJson(ResultSet rs) throws SQLException {
+        String[] nameArr = null;
+        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        int rows = 1;
+        while (rs.next()) {
+            if (rows++ == 1) {
+                nameArr = getNameArr(rs);// 获取列名
+            }
+
+            Map<String, Object> one = new LinkedHashMap<String, Object>();
+            for (int i = 0; i < nameArr.length; i++) {
+                String nameKey = nameArr[i];
+                one.put(nameKey, rs.getObject(i + 1));
+            }
+            result.add(one);
+        }
+        String dataStr = SqliteUtils.getJsonList(result);
+        System.out.println("执行查询语句结果==> " + dataStr);
+        return dataStr;
+    }
+
+    /**
+     * 根据结果集返回数据json
+     *
+     * @param rs
+     * @return
+     * @throws SQLException
+     */
+    public List<Map<String,Object>> getListMap(ResultSet rs) throws SQLException {
+        String[] nameArr = null;
+        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        int rows = 1;
+        while (rs.next()) {
+            if (rows++ == 1) {
+                nameArr = getNameArr(rs);// 获取列名
+            }
+
+            Map<String, Object> one = new LinkedHashMap<String, Object>();
+            for (int i = 0; i < nameArr.length; i++) {
+                String nameKey = nameArr[i];
+                one.put(nameKey, rs.getObject(i + 1));
+            }
+            result.add(one);
+        }
+        return result;
+    }
+
+    /**
      * 根据结果集返回列集合
      *
      * @param rs
@@ -353,7 +497,8 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
         Connection connection = null;
         try {
             // create a database connection
-            connection = DriverManager.getConnection(getDBUrl(TEST_DB_PATH));
+            String connectStr = getDBUrl(TEST_DB_PATH);
+            connection = DriverManager.getConnection(connectStr);
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30); // set timeout to 30 sec.
             statement.executeUpdate("create table if not exists person (id integer, name string)");
@@ -394,7 +539,6 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
                 System.out.println("id = " + rs.getString("id"));
                 System.out.println("name = " + rs.getString("name"));
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

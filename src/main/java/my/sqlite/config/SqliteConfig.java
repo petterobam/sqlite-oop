@@ -16,7 +16,7 @@ public class SqliteConfig {
     /**
      * 测试数据库
      */
-    public static final String TEST_DB_PATH = SqliteUtils.getClassRootPath("database/test.db");
+    public static final String TEST_DB_PATH = "database/test.db";
     /**
      * 程序数据库动态生成规则
      */

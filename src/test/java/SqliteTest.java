@@ -1,11 +1,10 @@
 import my.sqlite.base.SqliteHelper;
+import my.sqlite.entity.TestSpliteSqlite;
 import my.sqlite.entity.TestTable;
+import my.sqlite.service.TestSpliteSqliteService;
 import my.sqlite.service.TestTableService;
-import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.my.utils.MyDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -16,8 +15,6 @@ import java.util.List;
  * @create 2017-09-29 18:10
  **/
 public class SqliteTest {
-    protected static final Logger logger = LoggerFactory.getLogger(SqliteTest.class);
-
     @Test
     public void test1() throws ClassNotFoundException {
         SqliteHelper.test();
@@ -58,6 +55,38 @@ public class SqliteTest {
     public void test4() {
         TestTableService sqliteService = new TestTableService();//没有使用spring注入，暂时自己构建
         List<TestTable> list = sqliteService.getByNameOrId("title", 1);
+    }
+
+    @Test
+    public void test5() {
+        TestSpliteSqliteService sqliteService = new TestSpliteSqliteService();//没有使用spring注入，暂时自己构建
+        TestSpliteSqlite entity = new TestSpliteSqlite();
+        entity.setName("test1");
+        entity.setAuthor("petter");
+        entity.setArticle("article1");
+        entity.setCreateTime(MyDate.getStringDate());
+        sqliteService.insert(entity);
+        entity.setName("title2");
+        entity.setAuthor("bob");
+        entity.setArticle("article2");
+        entity.setCreateTime(MyDate.getStringDate());
+        sqliteService.insert(entity);
+
+        TestSpliteSqlite queryEntity = new TestSpliteSqlite();
+        sqliteService.query(queryEntity);
+        queryEntity.setAuthor("petter");
+        sqliteService.query(queryEntity);
+        queryEntity.setName("test");
+        sqliteService.query(queryEntity);
+        queryEntity.setId(1);
+        sqliteService.query(queryEntity);
+    }
+
+    @Test
+    public void test6() {
+        TestSpliteSqliteService sqliteService = new TestSpliteSqliteService();//没有使用spring注入，暂时自己构建
+        sqliteService.getByName("test");
+        sqliteService.getByNameOrId("title", 1);
     }
     //TODO 测试自定义注解，测试数据库函数和过程
 }

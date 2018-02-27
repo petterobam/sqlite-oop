@@ -3,7 +3,6 @@ package my.sqlite.service;
 import my.sqlite.base.SqliteBaseService;
 import my.sqlite.dao.TestTableDao;
 import my.sqlite.entity.TestTable;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -13,7 +12,6 @@ import java.util.List;
  * @author 欧阳洁
  * @create 2017-09-30 15:16
  **/
-@Service
 public class TestTableService extends SqliteBaseService<TestTable, TestTableDao> {
     public TestTableService() {// 必须要对应实现父类的构造方法
         super(TestTableDao.class);// 对应的Dao类
