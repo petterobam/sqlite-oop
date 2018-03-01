@@ -3,8 +3,8 @@ import my.sqlite.entity.TestSpliteSqlite;
 import my.sqlite.entity.TestTable;
 import my.sqlite.service.TestSpliteSqliteService;
 import my.sqlite.service.TestTableService;
+import my.sqlite.utils.SqliteUtils;
 import org.junit.Test;
-import org.my.utils.MyDate;
 
 import java.util.List;
 
@@ -27,12 +27,12 @@ public class SqliteTest {
         entity.setName("test1");
         entity.setAuthor("petter");
         entity.setArticle("article1");
-        entity.setCreateTime(MyDate.getStringDate());
+        entity.setCreateTime(SqliteUtils.getStringDate());
         sqliteService.insert(entity);
         entity.setName("title2");
         entity.setAuthor("bob");
         entity.setArticle("article2");
-        entity.setCreateTime(MyDate.getStringDate());
+        entity.setCreateTime(SqliteUtils.getStringDate());
         sqliteService.insert(entity);
 
         TestTable queryEntity = new TestTable();
@@ -64,12 +64,12 @@ public class SqliteTest {
         entity.setName("test1");
         entity.setAuthor("petter");
         entity.setArticle("article1");
-        entity.setCreateTime(MyDate.getStringDate());
+        entity.setCreateTime(SqliteUtils.getStringDate());
         sqliteService.insert(entity);
         entity.setName("title2");
         entity.setAuthor("bob");
         entity.setArticle("article2");
-        entity.setCreateTime(MyDate.getStringDate());
+        entity.setCreateTime(SqliteUtils.getStringDate());
         sqliteService.insert(entity);
 
         TestSpliteSqlite queryEntity = new TestSpliteSqlite();

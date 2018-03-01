@@ -47,6 +47,7 @@ public class SqliteUtils {
 
     /**
      * 替换字符串，非正则匹配
+     *
      * @param text
      * @param searchString
      * @param replacement
@@ -55,8 +56,10 @@ public class SqliteUtils {
     public static String replace(String text, String searchString, String replacement) {
         return replace(text, searchString, replacement, -1);
     }
+
     /**
      * 替换字符串，非正则匹配
+     *
      * @param text
      * @param searchString
      * @param replacement
@@ -76,7 +79,7 @@ public class SqliteUtils {
                 increase *= max < 0 ? 16 : (max > 64 ? 64 : max);
 
                 StringBuffer buf;
-                for(buf = new StringBuffer(text.length() + increase); end != -1; end = text.indexOf(searchString, start)) {
+                for (buf = new StringBuffer(text.length() + increase); end != -1; end = text.indexOf(searchString, start)) {
                     buf.append(text.substring(start, end)).append(replacement);
                     start = end + replLength;
                     --max;
@@ -249,7 +252,8 @@ public class SqliteUtils {
             //创建转换json的需要转换的集合类型   [{},{}]
             JavaType javaType = SqliteJsonMapper.nonDefaultMapper().contructCollectionType(List.class, clazz);
             return SqliteJsonMapper.nonDefaultMapper().fromJson(jsonString, javaType);//反序列化复杂List
-        }    }
+        }
+    }
 
     /**
      * Object转化为json字符串
@@ -283,7 +287,7 @@ public class SqliteUtils {
         for (Object obj : list) {
             if (flag) {
                 jsonBuf.append(",");
-            }else {
+            } else {
                 flag = true;
             }
             String jsonOne = getJsonObject(obj);
@@ -307,11 +311,34 @@ public class SqliteUtils {
     }
 
     /**
+     * 根据用户传入的时间表示格式，返回当前时间的格式 如果是yyyyMMdd，注意字母y不能大写。
+     *
+     * @param sformat yyyyMMddHHmmss
+     * @return
+     */
+    public static String getUserDate(String sformat) {
+        Date currentTime = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat(sformat);
+        String dateString = formatter.format(currentTime);
+        return dateString;
+    }
+
+    /**
+     * 获取现在日期时间
+     *
+     * @return 返回字符串格式 yyyy-MM-dd HH:mm:ss
+     */
+    public static String getStringDate() {
+        return getUserDate("yyyy-MM-dd HH:mm:ss");
+    }
+
+    /**
      * 根据类路径名，无参的构造实例化
+     *
      * @param fileClass
      * @return
      */
-    public static <T> T getInstance(Class<T> fileClass){
+    public static <T> T getInstance(Class<T> fileClass) {
         T result = null;
         try {
             // 要创建的类的构造器

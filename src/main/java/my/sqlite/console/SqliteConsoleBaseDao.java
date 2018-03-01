@@ -20,7 +20,8 @@ public class SqliteConsoleBaseDao {
             return null;
         }
         String sqlLower = sql.toLowerCase().trim();
-        if (sqlLower.startsWith("insert ") || sqlLower.startsWith("delete ") || sqlLower.startsWith("update ")) {
+        if (sqlLower.startsWith("insert ") || sqlLower.startsWith("delete ")
+                || sqlLower.startsWith("update ") || sqlLower.startsWith("create ")) {
             return this.sqliteHelper.executeForConsole(sql);
         } else {
             return this.sqliteHelper.queryForConsole(sql);
