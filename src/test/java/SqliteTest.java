@@ -88,5 +88,25 @@ public class SqliteTest {
         sqliteService.getByName("test");
         sqliteService.getByNameOrId("title", 1);
     }
+    @Test
+    public void test7(){
+        SqliteHelper sqliteHelper = new SqliteHelper("/D:/Sqlite/dbs/test.db",true);
+        sqliteHelper.queryJsonResult("select * from person");
+        sqliteHelper.cmdExec(".dd");
+        String result = sqliteHelper.cmdExec(".tables");
+        if(!SqliteUtils.isBlank(result)) {
+            result = result.replaceAll("\r", " ");
+            result = result.replaceAll("\n", " ");
+            while (result.indexOf("  ") > 0) {
+                result = result.replaceAll("  ", " ");
+            }
+            String[] arr = result.split(" ");
+            if(null != arr){
+                for (String s : arr) {
+                    System.out.println(s);
+                }
+            }
+        }
+    }
     //TODO 测试自定义注解，测试数据库函数和过程
 }

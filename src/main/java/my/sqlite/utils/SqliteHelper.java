@@ -4,6 +4,10 @@ import my.sqlite.annotation.SqliteTable;
 import my.sqlite.config.SqliteConfig;
 import my.sqlite.console.SqliteConsoleBaseEntity;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -52,6 +56,8 @@ public class SqliteHelper {
     public SqliteHelper(String dbPath, boolean absolute) {
         if (SqliteUtils.isBlank(dbPath)) {
             this.dbPath = SqliteConfig.DB_PATH;
+        }else {
+            this.dbPath = dbPath;
         }
         this.dbType = SqliteConfig.DB_TYPE_DEFAULT;
         if (!absolute) {
@@ -196,6 +202,15 @@ public class SqliteHelper {
         return JDBC;
     }
 
+    /**
+     * 查询语句执行，返回list格式的json字符串
+     *
+     * @param sql
+     * @return
+     */
+    public String queryJsonResult(String sql) {
+        return this.queryJsonResult(sql,null);
+    }
     /**
      * 查询语句执行，返回list格式的json字符串
      *
@@ -412,6 +427,57 @@ public class SqliteHelper {
     }
 
     /**
+     * 执行cmd命令
+     * @param cmd
+     */
+    public String cmdExec(String cmd){
+        StringBuffer cmdConnect = new StringBuffer("sqlite3 ").append(this.dbPath).append("\n");
+        cmdConnect.append(cmd).append("\n");
+        Runtime rt = Runtime.getRuntime();
+        try {
+            Process process = rt.exec(cmdConnect.toString());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            int i;
+            InputStream isNormal = process.getInputStream();
+            if(null != isNormal) {
+                while ((i = isNormal.read()) != -1) {
+                    baos.write(i);
+                }
+            }
+            InputStream isError = process.getErrorStream();
+            if(null != isError){
+                while ((i = isError.read()) != -1) {
+                    baos.write(i);
+                }
+            }
+            String str = baos.toString();
+            System.out.println("执行cmd命令["+ cmd +"]==> " + str);
+            return str;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Exception";
+        }
+    }
+
+    /**
+     * 获取数据库里面的表名
+     * @return
+     */
+    public String[] getTableNameArr(){
+        String result = this.cmdExec(".tables");
+        if(!SqliteUtils.isBlank(result) && !result.startsWith("Error:") && !"Exception".equals(result)) {
+            result = result.replaceAll("\r", " ");
+            result = result.replaceAll("\n", " ");
+            while (result.indexOf("  ") > 0) {
+                result = result.replaceAll("  ", " ");
+            }
+            String[] arr = result.split(" ");
+            return arr;
+        }
+        return null;
+    }
+
+    /**
      * 非查询语句执行，无参数
      *
      * @param sql
@@ -464,6 +530,36 @@ public class SqliteHelper {
             e.printStackTrace();
             consoleResult.setHasException(true);
             consoleResult.setSqlException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            consoleResult.setHasException(true);
+            consoleResult.setException(e);
+        } finally {
+            try {
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                consoleResult.setHasException(true);
+                consoleResult.setException(e);
+            }
+        }
+        return consoleResult;
+    }
+    /**
+     * cmd语句执行
+     *
+     * @param cmd
+     * @return
+     */
+    public SqliteConsoleBaseEntity cmdExecForConsole(String cmd) {
+        Connection connection = null;
+        SqliteConsoleBaseEntity consoleResult = new SqliteConsoleBaseEntity();
+        try {
+            System.out.println("执行非查询语句==> " + cmd);
+            String result = this.cmdExec(cmd);
+            System.out.println("执行非查询语句影响行数==> " + result);
+            consoleResult.setCmdResult(result);
+            consoleResult.setInfactLine(0);
         } catch (Exception e) {
             e.printStackTrace();
             consoleResult.setHasException(true);

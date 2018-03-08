@@ -13,6 +13,15 @@ public class SqliteConsoleBaseService {
     public SqliteConsoleBaseEntity excute(String sql) {
         return this.baseDao.excute(sql);
     }
+    /**
+     * 获取数据库表名集合
+     *
+     * @return
+     */
+    public String[] getTableNameArr() {
+        return this.baseDao.getTableNameArr();
+    }
+
     private SqliteConsoleBaseDao baseDao;
 
     public SqliteConsoleBaseService(String dbPath, boolean absolute) {

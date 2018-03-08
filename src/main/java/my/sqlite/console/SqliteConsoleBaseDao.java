@@ -12,21 +12,32 @@ public class SqliteConsoleBaseDao {
     /**
      * 执行控制台语句
      *
-     * @param sql
+     * @param sqlOrCmd
      * @return
      */
-    public SqliteConsoleBaseEntity excute(String sql) {
-        if (SqliteUtils.isBlank(sql)) {
+    public SqliteConsoleBaseEntity excute(String sqlOrCmd) {
+        if (SqliteUtils.isBlank(sqlOrCmd)) {
             return null;
         }
-        String sqlLower = sql.toLowerCase().trim();
-        if (sqlLower.startsWith("insert ") || sqlLower.startsWith("delete ")
+        String sqlLower = sqlOrCmd.toLowerCase().trim();
+        if(sqlLower.startsWith(".")){
+            return this.sqliteHelper.cmdExecForConsole(sqlOrCmd);
+        }else if (sqlLower.startsWith("insert ") || sqlLower.startsWith("delete ")
                 || sqlLower.startsWith("update ") || sqlLower.startsWith("create ")) {
-            return this.sqliteHelper.executeForConsole(sql);
+            return this.sqliteHelper.executeForConsole(sqlOrCmd);
         } else {
-            return this.sqliteHelper.queryForConsole(sql);
+            return this.sqliteHelper.queryForConsole(sqlOrCmd);
         }
     }
+
+    /**
+     * 获取数据库表名集合
+     * @return
+     */
+    public String[] getTableNameArr(){
+        return this.sqliteHelper.getTableNameArr();
+    }
+
 
     private SqliteHelper sqliteHelper;
 

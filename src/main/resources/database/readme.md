@@ -4,7 +4,7 @@
 
 # 建表
 
-    create table t_test_table(
+    create table t_sd3ddaf1(
         id integer primary key autoincrement not null,
         name char(100) not null,
         author char(100) not null,

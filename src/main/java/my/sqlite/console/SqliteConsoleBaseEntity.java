@@ -14,6 +14,10 @@ public class SqliteConsoleBaseEntity {
      */
     private List<Map<String, Object>> queryResult;
     /**
+     * 命令行执行结果
+     */
+    private String cmdResult;
+    /**
      * 影响行数
      */
     private int infactLine;
@@ -36,6 +40,14 @@ public class SqliteConsoleBaseEntity {
 
     public void setQueryResult(List<Map<String, Object>> queryResult) {
         this.queryResult = queryResult;
+    }
+
+    public String getCmdResult() {
+        return cmdResult;
+    }
+
+    public void setCmdResult(String cmdResult) {
+        this.cmdResult = cmdResult;
     }
 
     public int getInfactLine() {
