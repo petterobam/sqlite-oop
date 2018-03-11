@@ -23,7 +23,8 @@ public class SqliteConsoleBaseDao {
         if(sqlLower.startsWith(".")){
             return this.sqliteHelper.cmdExecForConsole(sqlOrCmd);
         }else if (sqlLower.startsWith("insert ") || sqlLower.startsWith("delete ")
-                || sqlLower.startsWith("update ") || sqlLower.startsWith("create ")) {
+                || sqlLower.startsWith("update ") || sqlLower.startsWith("create ")
+                || sqlLower.startsWith("alter ") || sqlLower.startsWith("drop ")) {
             return this.sqliteHelper.executeForConsole(sqlOrCmd);
         } else {
             return this.sqliteHelper.queryForConsole(sqlOrCmd);

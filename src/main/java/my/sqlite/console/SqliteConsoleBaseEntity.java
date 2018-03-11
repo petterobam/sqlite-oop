@@ -28,7 +28,7 @@ public class SqliteConsoleBaseEntity {
     /**
      * 程序异常
      */
-    private Exception Exception;
+    private Exception exception;
     /**
      * 是否存在异常
      */
@@ -67,11 +67,11 @@ public class SqliteConsoleBaseEntity {
     }
 
     public java.lang.Exception getException() {
-        return Exception;
+        return exception;
     }
 
     public void setException(java.lang.Exception exception) {
-        Exception = exception;
+        this.exception = exception;
     }
 
     public boolean isHasException() {

@@ -7,7 +7,6 @@ import my.sqlite.console.SqliteConsoleBaseEntity;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -56,7 +55,7 @@ public class SqliteHelper {
     public SqliteHelper(String dbPath, boolean absolute) {
         if (SqliteUtils.isBlank(dbPath)) {
             this.dbPath = SqliteConfig.DB_PATH;
-        }else {
+        } else {
             this.dbPath = dbPath;
         }
         this.dbType = SqliteConfig.DB_TYPE_DEFAULT;
@@ -209,8 +208,9 @@ public class SqliteHelper {
      * @return
      */
     public String queryJsonResult(String sql) {
-        return this.queryJsonResult(sql,null);
+        return this.queryJsonResult(sql, null);
     }
+
     /**
      * 查询语句执行，返回list格式的json字符串
      *
@@ -428,44 +428,64 @@ public class SqliteHelper {
 
     /**
      * 执行cmd命令
+     *
      * @param cmd
      */
-    public String cmdExec(String cmd){
+    public String cmdExec(String cmd) {
         StringBuffer cmdConnect = new StringBuffer("sqlite3 ").append(this.dbPath).append("\n");
         cmdConnect.append(cmd).append("\n");
         Runtime rt = Runtime.getRuntime();
+        InputStream isNormal = null;
+        InputStream isError = null;
+        Process process = null;
+        ByteArrayOutputStream baos = null;
         try {
-            Process process = rt.exec(cmdConnect.toString());
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            process = rt.exec(cmdConnect.toString());
+            baos = new ByteArrayOutputStream();
             int i;
-            InputStream isNormal = process.getInputStream();
-            if(null != isNormal) {
+            isNormal = process.getInputStream();
+            if (null != isNormal) {
                 while ((i = isNormal.read()) != -1) {
                     baos.write(i);
                 }
             }
-            InputStream isError = process.getErrorStream();
-            if(null != isError){
+            isError = process.getErrorStream();
+            if (null != isError) {
                 while ((i = isError.read()) != -1) {
                     baos.write(i);
                 }
             }
             String str = baos.toString();
-            System.out.println("执行cmd命令["+ cmd +"]==> " + str);
+            System.out.println("执行cmd命令[" + cmd + "]==> " + str);
             return str;
         } catch (IOException e) {
             e.printStackTrace();
             return "Exception";
+        } finally {
+            try {
+                if (null != isNormal) {
+                    isNormal.close();
+                }
+                if (null != isError) {
+                    isError.close();
+                }
+                if (null != baos) {
+                    baos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     /**
      * 获取数据库里面的表名
+     *
      * @return
      */
-    public String[] getTableNameArr(){
+    public String[] getTableNameArr() {
         String result = this.cmdExec(".tables");
-        if(!SqliteUtils.isBlank(result) && !result.startsWith("Error:") && !"Exception".equals(result)) {
+        if (!SqliteUtils.isBlank(result) && !result.startsWith("Error:") && !"Exception".equals(result)) {
             result = result.replaceAll("\r", " ");
             result = result.replaceAll("\n", " ");
             while (result.indexOf("  ") > 0) {
@@ -545,6 +565,7 @@ public class SqliteHelper {
         }
         return consoleResult;
     }
+
     /**
      * cmd语句执行
      *
