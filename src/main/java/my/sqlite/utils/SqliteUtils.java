@@ -29,19 +29,14 @@ public class SqliteUtils {
      */
     public static String getClassRootPath(String path) {
         path = SqliteUtils.trimToEmpty(path);
-        String filePath = SqliteUtils.class.getResource("").getPath().toString();
+        String filePath = SqliteUtils.class.getResource("/").getPath().toString();
         if (filePath == null) return null;
-        int index = filePath.indexOf("/classes/");
-        if (index >= 0) {
-            filePath = filePath.substring(0, index) + "/classes";
-        }
         String p = "";
         if (path.startsWith("/")) {
-            p = filePath + "" + path;
+            p = filePath + path.substring(1);
         } else {
-            p = filePath + "/" + path;
+            p = filePath + path;
         }
-
         return p;
     }
 
