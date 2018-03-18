@@ -212,6 +212,36 @@ public class SqliteHelper {
     }
 
     /**
+     * 获取查询条数的结果
+     * @param sql
+     * @return
+     */
+    public int queryCountResult(String sql){
+        Connection connection = null;
+        try {
+            // create a database connection
+            String JDBC_URL = this.getDBUrl();
+            connection = DriverManager.getConnection(JDBC_URL);
+            Statement statement = connection.createStatement();
+            statement.setQueryTimeout(300); // set timeout to 30 sec.
+            System.out.println("执行查询语句==> " + sql);
+            ResultSet rs = statement.executeQuery(sql);
+
+            rs.next();//第一行
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            try {
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * 查询语句执行，返回list格式的json字符串
      *
      * @param sql
@@ -272,6 +302,43 @@ public class SqliteHelper {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        } finally {
+            try {
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    /**
+     * 查询条数语句执行，返回条数，带参数
+     *
+     * @param sql
+     * @param param
+     * @return
+     */
+    public int queryCountResult(String sql, List<Object> param) {
+        Connection connection = null;
+        try {
+            // create a database connection
+            String JDBC_URL = this.getDBUrl();
+            connection = DriverManager.getConnection(JDBC_URL);
+            System.out.println("执行查询语句==> " + sql);
+            PreparedStatement prep = connection.prepareStatement(sql);
+            prep.setQueryTimeout(300);
+            if (SqliteUtils.isNotEmpty(param)) {
+                int count = 1;
+                for (Object o : param) {
+                    prep.setObject(count++, o);
+                }
+            }
+
+            ResultSet rs = prep.executeQuery();
+            rs.next();//第一行
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
         } finally {
             try {
                 if (connection != null) connection.close();

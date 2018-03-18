@@ -56,13 +56,22 @@ public abstract class SqliteBaseService<T extends SqliteBaseEntity, D extends Sq
     }
 
     /**
-     * 非查询语句执行，返回List<T>
+     * 查询语句执行，返回List<T>
      *
      * @param sql
      * @return
      */
     public List<T> query(String sql) {
         return this.baseDao.query(sql);
+    }
+    /**
+     * 查询条数语句执行，返回条数
+     *
+     * @param sql
+     * @return
+     */
+    public int count(String sql) {
+        return this.baseDao.count(sql);
     }
 
 
@@ -107,7 +116,7 @@ public abstract class SqliteBaseService<T extends SqliteBaseEntity, D extends Sq
     }
 
     /**
-     * 非查询语句执行，返回List<T>
+     * 查询语句执行，返回List<T>
      *
      * @param entity
      * @return
@@ -115,9 +124,18 @@ public abstract class SqliteBaseService<T extends SqliteBaseEntity, D extends Sq
     public List<T> query(T entity) {
         return this.baseDao.query(entity);
     }
+    /**
+     * 查询条数语句执行，返回条数
+     *
+     * @param entity
+     * @return
+     */
+    public int count(T entity) {
+        return this.baseDao.count(entity);
+    }
 
     /**
-     * 非查询语句执行，返回List<T>
+     * 查询语句执行，返回List<T>
      *
      * @param id
      * @return

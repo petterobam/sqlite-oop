@@ -81,6 +81,15 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
         return result;
     }
 
+    /**
+     * 查询条数
+     * @param sql
+     * @return
+     */
+    public int count(String sql) {
+        return sqliteHelper.queryCountResult(sql);
+    }
+
 
     /**
      * 插入
@@ -129,7 +138,7 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
     }
 
     /**
-     * 非查询语句执行，返回List<T>
+     * 查询语句执行，返回List<T>
      *
      * @param entity
      * @return
@@ -140,6 +149,16 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
         if (jsonStr == null) return null;
         List<T> result = SqliteUtils.getInstance(jsonStr, entity.getClass());
         return result;
+    }
+    /**
+     * 查询条数语句执行，返回List<T>
+     *
+     * @param entity
+     * @return
+     */
+    public int count(T entity) {
+        this.sqlHelper.createCount(entity);
+        return this.sqliteHelper.queryCountResult(entity.getCurrentSql(), entity.getCurrentParam());
     }
 
     /**

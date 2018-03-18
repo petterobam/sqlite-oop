@@ -108,5 +108,15 @@ public class SqliteTest {
             }
         }
     }
+    @Test
+    public void test8(){
+        TestTableService sqliteService = new TestTableService();//没有使用spring注入，暂时自己构建
+        int count1 = sqliteService.count("select count(1) from t_test_table");
+        System.out.println(count1);
+        TestTable query = new TestTable();
+        //query.setName("petter");
+        int count = sqliteService.count(query);
+        System.out.println(count);
+    }
     //TODO 测试自定义注解，测试数据库函数和过程
 }

@@ -189,6 +189,18 @@ public class SqliteSqlHelper<T extends SqliteBaseEntity> {
         target.setCurrentSql(sqlBuffer.toString());
         target.setCurrentParam(param);
     }
+    /**
+     * 创建查询语句
+     */
+    public void createCount(T target) {
+        List<Object> param = new Vector<Object>();
+        StringBuffer sqlBuffer = new StringBuffer();
+        sqlBuffer.append("SELECT COUNT(1) FROM ").append(this.tableName);
+        finishWhereOfAnd(sqlBuffer, param, target);
+
+        target.setCurrentSql(sqlBuffer.toString());
+        target.setCurrentParam(param);
+    }
 
     /**
      * 创建查询语句
