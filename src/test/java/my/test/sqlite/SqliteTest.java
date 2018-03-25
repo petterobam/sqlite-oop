@@ -1,8 +1,10 @@
+package my.test.sqlite;
+
 import my.sqlite.utils.SqliteHelper;
-import my.sqlite.entity.TestSpliteSqlite;
-import my.sqlite.entity.TestTable;
-import my.sqlite.service.TestSpliteSqliteService;
-import my.sqlite.service.TestTableService;
+import my.test.sqlite.entity.TestSpliteSqlite;
+import my.test.sqlite.entity.TestTable;
+import my.test.sqlite.service.TestSpliteSqliteService;
+import my.test.sqlite.service.TestTableService;
 import my.sqlite.utils.SqliteUtils;
 import org.junit.Test;
 

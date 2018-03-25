@@ -1,4 +1,4 @@
-package my.sqlite.entity;
+package my.test.sqlite.entity;
 
 import my.sqlite.base.SqliteBaseEntity;
 import my.sqlite.annotation.SqliteColumn;
