@@ -1,12 +1,12 @@
 [![Build Status](https://travis-ci.org/petterobam/my-sqlite.svg?branch=master)](https://travis-ci.org/petterobam/my-sqlite)
 [![Coverage Status](https://coveralls.io/repos/github/petterobam/my-sqlite/badge.svg?branch=master)](https://coveralls.io/github/petterobam/my-sqlite?branch=master)
-[![Analytics](https://ga-beacon.appspot.com/UA-85522412-2/welcome-page)](https://github.com/igrigorik/ga-beacon)
-[![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 [![bitHound Overall Score](https://www.bithound.io/github/petterobam/my-sqlite/badges/score.svg)](https://www.bithound.io/github/petterobam/my-sqlite)
 [![bitHound Dependencies](https://www.bithound.io/github/petterobam/my-sqlite/badges/dependencies.svg)](https://www.bithound.io/github/petterobam/my-sqlite/master/dependencies/npm)
 [![bitHound Dev Dependencies](https://www.bithound.io/github/petterobam/my-sqlite/badges/devDependencies.svg)](https://www.bithound.io/github/petterobam/my-sqlite/master/dependencies/npm)
 [![bitHound Code](https://www.bithound.io/github/petterobam/my-sqlite/badges/code.svg)](https://www.bithound.io/github/petterobam/my-sqlite)
+[![Analytics](https://ga-beacon.appspot.com/UA-85522412-2/welcome-page)](https://github.com/igrigorik/ga-beacon)
+[![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
 # my-sqlite
 sqlite 面向对象的数据库封装，自动创建、默认通用操作、自定义SQL和动态SQL，及无xml配置等。扩展实现sqlite表格分库，按日期自动生成库等。
