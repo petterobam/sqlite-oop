@@ -3,3 +3,5 @@ jdk:
   - oraclejdk8
 after_success:
   - mvn clean cobertura:cobertura coveralls:cobertura
+notifications:
+    slack: my-github:HR5snotT4kXfhchurTHqQOvc
