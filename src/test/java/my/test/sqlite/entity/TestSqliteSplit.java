@@ -14,7 +14,7 @@ import my.sqlite.config.SqliteConfig;
  * @create 2017-09-30 9:44
  **/
 @SqliteTable(name = "t_test_splite_sqlite",dbPath = "database/t_test_splite_",dbType = SqliteConfig.DB_TYPE_BY_DAY)
-public class TestSpliteSqlite extends SqliteBaseEntity {
+public class TestSqliteSplit extends SqliteBaseEntity {
     /**
      * 主键
      */

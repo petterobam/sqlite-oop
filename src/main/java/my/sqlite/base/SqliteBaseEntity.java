@@ -14,6 +14,8 @@ public class SqliteBaseEntity {
 
     private List<Object> currentParam;
 
+    private String needCreateBefSql;
+
     public Class getCurrentClass(){
         return this.getClass();
     }
@@ -32,5 +34,13 @@ public class SqliteBaseEntity {
 
     public void setCurrentParam(List<Object> currentParam) {
         this.currentParam = currentParam;
+    }
+
+    public String getNeedCreateBefSql() {
+        return needCreateBefSql;
+    }
+
+    public void setNeedCreateBefSql(String needCreateBefSql) {
+        this.needCreateBefSql = needCreateBefSql;
     }
 }

@@ -21,7 +21,7 @@ public @interface SqliteTable {
      */
     String dbPath() default my.sqlite.config.SqliteConfig.DB_PATH;
     /**
-     * 数据库文件路径
+     * 数据库文件路径类型
      * @return
      */
     int dbType() default my.sqlite.config.SqliteConfig.DB_TYPE_DEFAULT;
