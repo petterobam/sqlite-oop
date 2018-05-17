@@ -1,8 +1,5 @@
 package my.sqlite.console;
 
-import my.sqlite.utils.SqliteHelper;
-import my.sqlite.utils.SqliteUtils;
-
 public class SqliteConsoleBaseService {
     /**
      * 执行控制台语句

@@ -1,9 +1,7 @@
 package my.test.sqlite;
 
 import my.sqlite.utils.SqliteUtils;
-import my.test.sqlite.entity.TestTable;
 import my.test.sqlite.entity.TestTableSplit;
-import my.test.sqlite.service.TestTableService;
 import my.test.sqlite.service.TestTableSplitService;
 import org.junit.Test;
 

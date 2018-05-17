@@ -1,6 +1,8 @@
 package my.sqlite.annotation;
 
 
+import my.sqlite.constant.SqliteConstant;
+
 /**
  * 表名注解类
  *
@@ -19,10 +21,10 @@ public @interface SqliteTable {
      * 数据库文件路径
      * @return
      */
-    String dbPath() default my.sqlite.constant.SqliteConstant.DB_PATH;
+    String dbPath() default SqliteConstant.DB_PATH;
     /**
      * 数据库文件路径类型
      * @return
      */
-    int dbType() default my.sqlite.constant.SqliteConstant.DB_TYPE_DEFAULT;
+    int dbType() default SqliteConstant.DB_TYPE_DEFAULT;
 }

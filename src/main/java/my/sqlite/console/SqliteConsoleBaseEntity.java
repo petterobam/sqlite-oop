@@ -66,11 +66,11 @@ public class SqliteConsoleBaseEntity {
         this.sqlException = sqlException;
     }
 
-    public java.lang.Exception getException() {
+    public Exception getException() {
         return exception;
     }
 
-    public void setException(java.lang.Exception exception) {
+    public void setException(Exception exception) {
         this.exception = exception;
     }
 

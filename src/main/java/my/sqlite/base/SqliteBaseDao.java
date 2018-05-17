@@ -1,5 +1,6 @@
 package my.sqlite.base;
 
+import my.sqlite.constant.SqliteConstant;
 import my.sqlite.utils.SqliteHelper;
 import my.sqlite.utils.SqliteSqlHelper;
 import my.sqlite.utils.SqliteUtils;
@@ -49,6 +50,70 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
     }
 
     /**
+     * 插入
+     *
+     * @param entity
+     * @return
+     */
+    public int insert(T entity) {
+        this.sqlHelper.createInsert(entity);
+        if (!SqliteUtils.isBlank(entity.getNeedCreateBefSql())) {
+            //插入数据之前判断是否需要建表
+            this.sqliteHelper.execute(entity.getNeedCreateBefSql());
+        }
+        return this.sqliteHelper.insert(entity.getCurrentSql(), entity.getCurrentParam());
+    }
+
+    /**
+     * 批量插入
+     *
+     * @param sqlList
+     * @return
+     */
+    public int batchInsertSql(List<String> sqlList) {
+        return this.sqliteHelper.batchInsertSql(sqlList);
+    }
+
+    /**
+     * 批量插入
+     *
+     * @param sqlList
+     * @param batchCount
+     * @return
+     */
+    public int batchInsertSql(List<String> sqlList, int batchCount) {
+        return this.sqliteHelper.batchInsertSql(sqlList, batchCount);
+    }
+
+    /**
+     * 批量插入
+     *
+     * @param list
+     * @return
+     */
+    public int batchInsert(List<T> list) {
+        return this.batchInsert(list, SqliteConstant.DEFAULT_BATCH_COUNT);
+    }
+
+    /**
+     * 批量插入
+     *
+     * @param list
+     * @param batchCount
+     * @return
+     */
+    public int batchInsert(List<T> list, int batchCount) {
+        if (SqliteUtils.isNotEmpty(list)) {
+            for (T entity : list) {
+                this.sqlHelper.createInsert(entity);
+            }
+        } else {
+            return 0;
+        }
+        return this.sqliteHelper.batchInsert(list, batchCount);
+    }
+
+    /**
      * 修改
      *
      * @param sql
@@ -59,6 +124,66 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
     }
 
     /**
+     * 修改
+     *
+     * @param entity
+     * @return
+     */
+    public int update(T entity) {
+        this.sqlHelper.createUpdate(entity);
+        return this.sqliteHelper.update(entity.getCurrentSql(), entity.getCurrentParam());
+    }
+
+    /**
+     * 批量修改
+     *
+     * @param sqlList
+     * @return
+     */
+    public int batchUpdateSql(List<String> sqlList) {
+        return this.sqliteHelper.batchUpdateSql(sqlList);
+    }
+
+    /**
+     * 批量修改
+     *
+     * @param sqlList
+     * @param batchCount
+     * @return
+     */
+    public int batchUpdateSql(List<String> sqlList, int batchCount) {
+        return this.sqliteHelper.batchUpdateSql(sqlList, batchCount);
+    }
+
+    /**
+     * 批量修改
+     *
+     * @param list
+     * @return
+     */
+    public int batchUpdate(List<T> list) {
+        return this.batchUpdate(list, SqliteConstant.DEFAULT_BATCH_COUNT);
+    }
+
+    /**
+     * 批量修改
+     *
+     * @param list
+     * @param batchCount
+     * @return
+     */
+    public int batchUpdate(List<T> list, int batchCount) {
+        if (SqliteUtils.isNotEmpty(list)) {
+            for (T entity : list) {
+                this.sqlHelper.createUpdate(entity);
+            }
+        } else {
+            return 0;
+        }
+        return this.sqliteHelper.batchUpdate(list, batchCount);
+    }
+
+    /**
      * 删除
      *
      * @param sql
@@ -66,6 +191,111 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
      */
     public int delete(String sql) {
         return this.sqliteHelper.delete(sql);
+    }
+
+    /**
+     * 删除
+     *
+     * @param entity
+     * @return
+     */
+    public int delete(T entity) {
+        this.sqlHelper.createDelete(entity);
+        return this.sqliteHelper.delete(entity.getCurrentSql(), entity.getCurrentParam());
+    }
+
+    /**
+     * 批量删除
+     *
+     * @param sqlList
+     * @return
+     */
+    public int batchDeleteSql(List<String> sqlList) {
+        return this.sqliteHelper.batchDeleteSql(sqlList);
+    }
+
+    /**
+     * 批量删除
+     *
+     * @param sqlList
+     * @param batchCount
+     * @return
+     */
+    public int batchDeleteSql(List<String> sqlList, int batchCount) {
+        return this.sqliteHelper.batchDeleteSql(sqlList, batchCount);
+    }
+
+    /**
+     * 批量删除
+     *
+     * @param list
+     * @return
+     */
+    public int batchDelete(List<T> list) {
+        return this.batchDelete(list, SqliteConstant.DEFAULT_BATCH_COUNT);
+    }
+
+    /**
+     * 批量删除
+     *
+     * @param list
+     * @param batchCount
+     * @return
+     */
+    public int batchDelete(List<T> list, int batchCount) {
+        if (SqliteUtils.isNotEmpty(list)) {
+            for (T entity : list) {
+                this.sqlHelper.createDelete(entity);
+            }
+        } else {
+            return 0;
+        }
+        return this.sqliteHelper.batchDelete(list, batchCount);
+    }
+
+    /**
+     * 通过ID集合，批量删除
+     *
+     * @param list
+     * @return
+     */
+    public int batchDeleteByIdList(List<Object> list) {
+        return this.batchDeleteByIdList(list, SqliteConstant.DEFAULT_BATCH_COUNT);
+    }
+
+    /**
+     * 通过ID集合，批量删除
+     *
+     * @param list
+     * @param batchCount
+     * @return
+     */
+    public int batchDeleteByIdList(List<Object> list, int batchCount) {
+        String sql = this.sqlHelper.createDeleteById();
+        return this.sqliteHelper.batchDeleteByIdList(sql, list, batchCount);
+    }
+
+    /**
+     * 删除
+     *
+     * @param id
+     * @return
+     */
+    public int deleteById(Object id) {
+        return this.deleteById(id, null);
+    }
+
+    /**
+     * 删除，分表字段值
+     *
+     * @param id
+     * @return
+     */
+    public int deleteById(Object id, String tableExt) {
+        String sql = this.sqlHelper.createDeleteById(tableExt);
+        List<Object> param = new ArrayList<Object>(1);
+        param.add(id);
+        return this.sqliteHelper.delete(sql, param);
     }
 
     /**
@@ -82,75 +312,6 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
     }
 
     /**
-     * 查询条数
-     * @param sql
-     * @return
-     */
-    public int count(String sql) {
-        return sqliteHelper.queryCountResult(sql);
-    }
-
-
-    /**
-     * 插入
-     *
-     * @param entity
-     * @return
-     */
-    public int insert(T entity) {
-        this.sqlHelper.createInsert(entity);
-        if(!SqliteUtils.isBlank(entity.getNeedCreateBefSql())){
-            //插入数据之前判断是否需要建表
-            this.sqliteHelper.execute(entity.getNeedCreateBefSql());
-        }
-        return this.sqliteHelper.insert(entity.getCurrentSql(), entity.getCurrentParam());
-    }
-
-    /**
-     * 修改
-     *
-     * @param entity
-     * @return
-     */
-    public int update(T entity) {
-        this.sqlHelper.createUpdate(entity);
-        return this.sqliteHelper.update(entity.getCurrentSql(), entity.getCurrentParam());
-    }
-
-    /**
-     * 删除
-     *
-     * @param entity
-     * @return
-     */
-    public int delete(T entity) {
-        this.sqlHelper.createDelete(entity);
-        return this.sqliteHelper.delete(entity.getCurrentSql(), entity.getCurrentParam());
-    }
-
-    /**
-     * 删除，分表字段值
-     *
-     * @param id
-     * @return
-     */
-    public int deleteById(Object id,String tableExt) {
-        String sql = this.sqlHelper.createDeleteById(id,tableExt);
-        List<Object> param = new ArrayList<Object>(1);
-        param.add(id);
-        return this.sqliteHelper.delete(sql, param);
-    }
-    /**
-     * 删除
-     *
-     * @param id
-     * @return
-     */
-    public int deleteById(Object id) {
-        return this.deleteById(id,null);
-    }
-
-    /**
      * 查询语句执行，返回List<T>
      *
      * @param entity
@@ -163,16 +324,6 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
         List<T> result = SqliteUtils.getInstance(jsonStr, entity.getClass());
         return result;
     }
-    /**
-     * 查询条数语句执行，返回List<T>
-     *
-     * @param entity
-     * @return
-     */
-    public int count(T entity) {
-        this.sqlHelper.createCount(entity);
-        return this.sqliteHelper.queryCountResult(entity.getCurrentSql(), entity.getCurrentParam());
-    }
 
     /**
      * 查询语句执行，返回T
@@ -181,17 +332,18 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
      * @return
      */
     public T queryById(Object id) {
-        return this.queryById(id,null);
+        return this.queryById(id, null);
     }
 
     /**
      * 查询语句执行，返回T
+     *
      * @param id
      * @param tableExt 分表字段的值
      * @return
      */
-    public T queryById(Object id,String tableExt) {
-        String sql = this.sqlHelper.createSelectById(id,tableExt);
+    public T queryById(Object id, String tableExt) {
+        String sql = this.sqlHelper.createSelectById(id, tableExt);
         List<Object> param = new ArrayList<Object>(1);
         param.add(id);
         String jsonStr = this.sqliteHelper.queryJsonResult(sql, param, this.getColumMap());
@@ -203,6 +355,28 @@ public abstract class SqliteBaseDao<T extends SqliteBaseEntity> {
             return null;
         }
     }
+
+    /**
+     * 查询条数
+     *
+     * @param sql
+     * @return
+     */
+    public int count(String sql) {
+        return sqliteHelper.queryCountResult(sql);
+    }
+
+    /**
+     * 查询条数语句执行，返回List<T>
+     *
+     * @param entity
+     * @return
+     */
+    public int count(T entity) {
+        this.sqlHelper.createCount(entity);
+        return this.sqliteHelper.queryCountResult(entity.getCurrentSql(), entity.getCurrentParam());
+    }
+
 
     /**
      * 通过自定义注解执行查询的语句

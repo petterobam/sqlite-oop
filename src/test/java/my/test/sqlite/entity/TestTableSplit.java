@@ -1,5 +1,6 @@
 package my.test.sqlite.entity;
 
+
 import my.sqlite.annotation.SqliteColumn;
 import my.sqlite.annotation.SqliteID;
 import my.sqlite.annotation.SqliteTable;
@@ -8,7 +9,7 @@ import my.sqlite.annotation.SqliteTransient;
 import my.sqlite.base.SqliteBaseEntity;
 
 /**
- * 测试表对应实体类
+ * 测试分表对应实体类
  *
  * @author 欧阳洁
  * @create 2017-09-30 9:44

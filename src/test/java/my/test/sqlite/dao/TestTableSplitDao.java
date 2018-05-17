@@ -1,11 +1,8 @@
 package my.test.sqlite.dao;
 
-import my.sqlite.annotation.SqliteSql;
-import my.sqlite.base.SqliteBaseDao;
-import my.test.sqlite.entity.TestTable;
-import my.test.sqlite.entity.TestTableSplit;
 
-import java.util.List;
+import my.sqlite.base.SqliteBaseDao;
+import my.test.sqlite.entity.TestTableSplit;
 
 /**
  * Sqlite[test_table]的dao

@@ -5,11 +5,10 @@ import my.sqlite.annotation.SqliteColumn;
 import my.sqlite.annotation.SqliteID;
 import my.sqlite.annotation.SqliteTable;
 import my.sqlite.annotation.SqliteTransient;
-import my.sqlite.config.SqliteConfig;
 import my.sqlite.constant.SqliteConstant;
 
 /**
- * 测试表对应实体类
+ * 测试分库表对应实体类
  *
  * @author 欧阳洁
  * @create 2017-09-30 9:44

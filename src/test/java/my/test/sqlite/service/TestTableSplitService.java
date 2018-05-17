@@ -1,12 +1,9 @@
 package my.test.sqlite.service;
 
-import my.sqlite.base.SqliteBaseService;
-import my.test.sqlite.dao.TestTableDao;
-import my.test.sqlite.dao.TestTableSplitDao;
-import my.test.sqlite.entity.TestTable;
-import my.test.sqlite.entity.TestTableSplit;
 
-import java.util.List;
+import my.sqlite.base.SqliteBaseService;
+import my.test.sqlite.entity.TestTableSplit;
+import my.test.sqlite.dao.TestTableSplitDao;
 
 /**
  * Sqlite[test_table]的service

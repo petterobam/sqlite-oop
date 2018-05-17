@@ -1,10 +1,10 @@
 package my.test.sqlite.entity;
 
-import my.sqlite.base.SqliteBaseEntity;
 import my.sqlite.annotation.SqliteColumn;
 import my.sqlite.annotation.SqliteID;
 import my.sqlite.annotation.SqliteTable;
 import my.sqlite.annotation.SqliteTransient;
+import my.sqlite.base.SqliteBaseEntity;
 
 /**
  * 测试表对应实体类

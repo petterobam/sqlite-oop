@@ -1,7 +1,6 @@
 package my.sqlite.base;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Sqlite基础Entity

@@ -1,12 +1,12 @@
 package my.sqlite.utils;
 
 import my.sqlite.annotation.SqliteColumn;
-import my.sqlite.annotation.SqliteID;
 import my.sqlite.annotation.SqliteSql;
 import my.sqlite.annotation.SqliteTable;
-import my.sqlite.annotation.SqliteTableSplit;
 import my.sqlite.annotation.SqliteTransient;
 import my.sqlite.base.SqliteBaseEntity;
+import my.sqlite.annotation.SqliteID;
+import my.sqlite.annotation.SqliteTableSplit;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -113,17 +113,16 @@ public class SqliteSqlHelper<T extends SqliteBaseEntity> {
     /**
      * 根据Id删除Sql
      *
-     * @param id
      */
-    public String createDeleteById(Object id) {
-        return createSelectById(id,null);
+    public String createDeleteById() {
+        return createDeleteById(null);
     }
     /**
      * 根据Id删除Sql
      *
-     * @param id
+     * @param tableExt
      */
-    public String createDeleteById(Object id,String tableExt) {
+    public String createDeleteById(String tableExt) {
         StringBuffer sqlBuffer = new StringBuffer();
         sqlBuffer.append("DELETE FROM ").append(this.getTableName(tableExt)).append(" WHERE ");
         sqlBuffer.append(this.idName).append("=?");
@@ -285,7 +284,7 @@ public class SqliteSqlHelper<T extends SqliteBaseEntity> {
 
             }
             String sql = SqliteUtils.replace(sqliteSql.sql(), "this.tableName", this.getTableName());
-            //TODO 此处可以读取自定义SQL的辅助注解，像上面提到的SqliteSqlWhereIf注解，实现动态SQL
+            //待处理：此处可以读取自定义SQL的辅助注解，像上面提到的SqliteSqlWhereIf注解，实现动态SQL
             target.setCurrentSql(sql);
             target.setCurrentParam(param);
         }
@@ -317,7 +316,7 @@ public class SqliteSqlHelper<T extends SqliteBaseEntity> {
         }
         SqliteSql sqliteSql = method.getAnnotation(SqliteSql.class);
         String sql = SqliteUtils.replace(sqliteSql.sql(), "this.tableName", this.getTableName());
-        //TODO 此处可以读取自定义SQL的辅助注解，像上面提到的SqliteSqlWhereIf注解，实现动态SQL
+        //待处理：此处可以读取自定义SQL的辅助注解，像上面提到的SqliteSqlWhereIf注解，实现动态SQL
         return sql;
     }
 
