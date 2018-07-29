@@ -1,12 +1,12 @@
 package my.sqlite.utils;
 
 import my.sqlite.annotation.SqliteColumn;
+import my.sqlite.annotation.SqliteID;
 import my.sqlite.annotation.SqliteSql;
 import my.sqlite.annotation.SqliteTable;
+import my.sqlite.annotation.SqliteTableSplit;
 import my.sqlite.annotation.SqliteTransient;
 import my.sqlite.base.SqliteBaseEntity;
-import my.sqlite.annotation.SqliteID;
-import my.sqlite.annotation.SqliteTableSplit;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

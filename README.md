@@ -6,7 +6,7 @@
 # my-sqlite
 sqlite 面向对象的数据库封装，自动创建、默认通用操作、自定义SQL和动态SQL，及无xml配置等。扩展实现sqlite表格分库，按日期自动生成库等。
 
-新增控制台超类基础实现，应用实例：[https://github.com/petterobam/my-sqlite](https://github.com/petterobam/my-sqlite)
+新增控制台超类基础实现，应用实例：[https://github.com/petterobam/my-sqlite-console](https://github.com/petterobam/my-sqlite-console)
 
 # wiki目录
 1. [使用示例](https://github.com/petterobam/my-sqlite/wiki/%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B)
@@ -19,11 +19,13 @@ sqlite 面向对象的数据库封装，自动创建、默认通用操作、自�
 1. ~~分表分库~~
 1. ~~Sqlite控制台基础功能类~~
 1. ~~自定义配置加载~~
-1. **批量操作（事务）**
-1. **缓存库基础功能类实现**
-1. 缓存库和文件库混用实现
-1. **连接池实现**
+1. **~~批量操作（事务）~~**
+1. **~~缓存库基础功能类实现~~**
+1. ~~缓存库和文件库混用实现~~
+1. **~~连接池实现~~**
 1. 查询分页功能实现
 1. 备份工具实现
 1. 密码连接实现
 1. 密码库生成实现
+
+PS：更多完善的功能请参照

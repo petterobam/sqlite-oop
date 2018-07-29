@@ -125,6 +125,7 @@ public class SqliteConnectionPool extends SqliteBaseConnectionFactory {
                             break;// 如果配置不使用连接池，结束线程
                         }
                         SqliteThreadUtils.sleep(SLEEP);
+                        REFRESH_CON_POOL = true;
                         checkAllIdleConnection();
                     } catch (InterruptedException e) {
                         idleConList.clear();

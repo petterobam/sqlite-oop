@@ -2,6 +2,7 @@ package my.sqlite.exception;
 
 import my.sqlite.config.SqliteConfig;
 import my.sqlite.utils.SqliteLogUtils;
+import my.sqlite.utils.SqliteUtils;
 
 /**
  * 连接池溢出异常

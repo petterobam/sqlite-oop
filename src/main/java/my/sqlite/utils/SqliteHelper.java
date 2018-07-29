@@ -50,7 +50,9 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
             this.dbType = sqliteTable.dbType();
         }
         // 默认相对路径
-        this.dbPath = SqliteUtils.getClassRootPath(this.dbPath);
+        if(SqliteConfig.isPathBaseClasspath()) {
+            this.dbPath = SqliteUtils.getClassRootPath(this.dbPath);
+        }
     }
 
     /**
@@ -64,7 +66,9 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
         }
         this.dbType = SqliteConstant.DB_TYPE_DEFAULT;
         // 默认相对路径
-        this.dbPath = SqliteUtils.getClassRootPath(this.dbPath);
+        if(SqliteConfig.isPathBaseClasspath()) {
+            this.dbPath = SqliteUtils.getClassRootPath(this.dbPath);
+        }
     }
 
     /**
@@ -139,22 +143,22 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
     /**
      * 批量插入，带参数
      *
-     * @param sqlMapParamList
+     * @param sqlWithParamList
      * @return
      */
-    public int batchInsert(List<T> sqlMapParamList) {
-        return this.batchExecute(sqlMapParamList);
+    public int batchInsert(List<T> sqlWithParamList) {
+        return this.batchExecute(sqlWithParamList);
     }
 
     /**
      * 批量插入，带参数
      *
-     * @param sqlMapParamList
+     * @param sqlWithParamList
      * @param batchCount
      * @return
      */
-    public int batchInsert(List<T> sqlMapParamList, int batchCount) {
-        return this.batchExecute(sqlMapParamList, batchCount);
+    public int batchInsert(List<T> sqlWithParamList, int batchCount) {
+        return this.batchExecute(sqlWithParamList, batchCount);
     }
 
     /**
@@ -202,22 +206,22 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
     /**
      * 批量更新，带参数
      *
-     * @param sqlMapParamList
+     * @param sqlWithParamList
      * @return
      */
-    public int batchUpdate(List<T> sqlMapParamList) {
-        return this.batchExecute(sqlMapParamList);
+    public int batchUpdate(List<T> sqlWithParamList) {
+        return this.batchExecute(sqlWithParamList);
     }
 
     /**
      * 批量更新，带参数
      *
-     * @param sqlMapParamList
+     * @param sqlWithParamList
      * @param batchCount
      * @return
      */
-    public int batchUpdate(List<T> sqlMapParamList, int batchCount) {
-        return this.batchExecute(sqlMapParamList, batchCount);
+    public int batchUpdate(List<T> sqlWithParamList, int batchCount) {
+        return this.batchExecute(sqlWithParamList, batchCount);
     }
 
     /**
@@ -265,22 +269,22 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
     /**
      * 批量删除，带参数
      *
-     * @param sqlMapParamList
+     * @param sqlWithParamList
      * @return
      */
-    public int batchDelete(List<T> sqlMapParamList) {
-        return this.batchExecute(sqlMapParamList);
+    public int batchDelete(List<T> sqlWithParamList) {
+        return this.batchExecute(sqlWithParamList);
     }
 
     /**
      * 批量删除，带参数
      *
-     * @param sqlMapParamList
+     * @param sqlWithParamList
      * @param batchCount
      * @return
      */
-    public int batchDelete(List<T> sqlMapParamList, int batchCount) {
-        return this.batchExecute(sqlMapParamList, batchCount);
+    public int batchDelete(List<T> sqlWithParamList, int batchCount) {
+        return this.batchExecute(sqlWithParamList, batchCount);
     }
 
     /**
@@ -707,9 +711,11 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
                     if (result % batchCount == 0) {
                         statement.executeBatch();
                         connection.commit();// 提交
-                        if (null == connection || connection.isClosed()) { //如果连接关闭了 就在创建一个 为什么要这样 原因是 connection.commit()后可能conn被关闭
+                        if (null == connection || connection.isClosed()) {
+                            //如果连接关闭了 就在创建一个 为什么要这样 原因是 connection.commit()后可能conn被关闭
                             connection = this.getConnection();
                             connection.setAutoCommit(false);
+                            statement = connection.createStatement();
                         }
                     }
                 }
@@ -734,25 +740,25 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
     /**
      * 非查询语句批量执行Sql语句
      *
-     * @param sqlMapParamList
+     * @param sqlWithParamList
      * @return
      */
-    public int batchExecute(List<T> sqlMapParamList) {
-        return this.batchExecute(sqlMapParamList, SqliteConstant.DEFAULT_BATCH_COUNT);
+    public int batchExecute(List<T> sqlWithParamList) {
+        return this.batchExecute(sqlWithParamList, SqliteConstant.DEFAULT_BATCH_COUNT);
     }
 
     /**
      * 非查询语句批量执行Sql语句
      *
-     * @param sqlMapParamList
+     * @param sqlWithParamList
      * @param batchCount
      * @return
      */
-    public int batchExecute(List<T> sqlMapParamList, int batchCount) {
+    public int batchExecute(List<T> sqlWithParamList, int batchCount) {
         Connection connection = null;
         try {
             int result = 0;
-            if (SqliteUtils.isNotEmpty(sqlMapParamList)) {
+            if (SqliteUtils.isNotEmpty(sqlWithParamList)) {
                 if (batchCount <= 0) {//默认批量提交粒度100条
                     batchCount = SqliteConstant.DEFAULT_BATCH_COUNT;
                 }
@@ -762,31 +768,33 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
                 PreparedStatement prep = null;
                 String preSql = null;
                 int currCount = 0;
-                for (T sqlAndParam : sqlMapParamList) {
-                    if (!SqliteUtils.isBlank(sqlAndParam.getCurrentSql())) {
-                        if (!SqliteUtils.equals(preSql, sqlAndParam.getCurrentSql()) || currCount % batchCount == 0) {
-                            if(currCount > 0) {
-                                currCount = 0;
-                                prep.executeBatch();
-                                connection.commit();// 提交
-                                if (null == connection || connection.isClosed()) { //如果连接关闭了 就在创建一个 为什么要这样 原因是 connection.commit()后可能conn被关闭
-                                    connection = this.getConnection();
-                                    connection.setAutoCommit(false);
-                                }
-                            }
-                            prep = connection.prepareStatement(sqlAndParam.getCurrentSql());
-                        }
-                        if (SqliteUtils.isNotEmpty(sqlAndParam.getCurrentParam())) {
-                            int count = 1;
-                            for (Object o : sqlAndParam.getCurrentParam()) {
-                                prep.setObject(count++, o);
-                            }
-                        }
-                        prep.addBatch();
-                        result++;
-                        currCount++;
-                        preSql = sqlAndParam.getCurrentSql();
+                for (T sqlAndParam : sqlWithParamList) {
+                    if (SqliteUtils.isBlank(sqlAndParam.getCurrentSql())) {
+                        continue;
                     }
+                    if (!SqliteUtils.equals(preSql, sqlAndParam.getCurrentSql()) || currCount % batchCount == 0) {
+                        if(currCount > 0) {
+                            currCount = 0;
+                            prep.executeBatch();
+                            connection.commit();// 提交
+                            if (null == connection || connection.isClosed()) {
+                                //如果连接关闭了 就在创建一个 为什么要这样 原因是 connection.commit()后可能conn被关闭
+                                connection = this.getConnection();
+                                connection.setAutoCommit(false);
+                            }
+                        }
+                        prep = connection.prepareStatement(sqlAndParam.getCurrentSql());
+                    }
+                    if (SqliteUtils.isNotEmpty(sqlAndParam.getCurrentParam())) {
+                        int count = 1;
+                        for (Object o : sqlAndParam.getCurrentParam()) {
+                            prep.setObject(count++, o);
+                        }
+                    }
+                    prep.addBatch();
+                    result++;
+                    currCount++;
+                    preSql = sqlAndParam.getCurrentSql();
                 }
                 prep.executeBatch();
                 connection.commit();// 提交
@@ -827,17 +835,18 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
                 PreparedStatement prep = null;
                 prep = connection.prepareStatement(idParamSql);
                 for (Object id : idList) {
-                    if (null != id) {
-                        prep.setObject(1, id);
-                        prep.addBatch();
-                        result++;
-                        if (result % batchCount == 0) {
-                            prep.executeBatch();
-                            connection.commit();// 提交
-                            if (null == connection || connection.isClosed()) { //如果连接关闭了 就在创建一个 为什么要这样 原因是 connection.commit()后可能conn被关闭
-                                connection = this.getConnection();
-                                connection.setAutoCommit(false);
-                            }
+                    if (null == id) {
+                        continue;
+                    }
+                    prep.setObject(1, id);
+                    prep.addBatch();
+                    result++;
+                    if (result % batchCount == 0) {
+                        prep.executeBatch();
+                        connection.commit();// 提交
+                        if (null == connection || connection.isClosed()) { //如果连接关闭了 就在创建一个 为什么要这样 原因是 connection.commit()后可能conn被关闭
+                            connection = this.getConnection();
+                            connection.setAutoCommit(false);
                         }
                     }
                 }
@@ -1037,6 +1046,18 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
      * @return
      */
     private Connection getConnection() throws SQLException {
+        String currDbPath = getCurrDbPath();
+        return SqliteConnectionUtils.getConnection(currDbPath);
+    }
+
+    /**
+     * 获取当前数据库名（分库）
+     * @return
+     */
+    public String getCurrDbPath(){
+        if(SqliteConstant.DB_TYPE_DEFAULT == this.dbType){
+            return this.dbPath;
+        }
         StringBuffer currentDbPathSb = new StringBuffer(this.dbPath);
         switch (this.dbType) {
             case SqliteConstant.DB_TYPE_BY_MINUTE:
@@ -1058,6 +1079,6 @@ public class SqliteHelper<T extends SqliteBaseEntity> {
                 break;
         }
         String currDbPath = currentDbPathSb.toString();
-        return SqliteConnectionUtils.getConnection(currDbPath);
+        return currDbPath;
     }
 }

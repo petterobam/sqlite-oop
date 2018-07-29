@@ -47,10 +47,11 @@ public abstract class SqliteBaseService<T extends SqliteBaseEntity, D extends Sq
 
     /**
      * 批量插入功能
+     *
      * @param list
      * @return
      */
-    public int batchInsert(List<T> list){
+    public int batchInsert(List<T> list) {
         return this.baseDao.batchInsert(list);
     }
 
@@ -76,10 +77,11 @@ public abstract class SqliteBaseService<T extends SqliteBaseEntity, D extends Sq
 
     /**
      * 批量修改功能
+     *
      * @param list
      * @return
      */
-    public int batchUpdate(List<T> list){
+    public int batchUpdate(List<T> list) {
         return this.baseDao.batchUpdate(list);
     }
 
@@ -105,10 +107,11 @@ public abstract class SqliteBaseService<T extends SqliteBaseEntity, D extends Sq
 
     /**
      * 批量删除功能
+     *
      * @param list
      * @return
      */
-    public int batchDelete(List<T> list){
+    public int batchDelete(List<T> list) {
         return this.baseDao.batchDelete(list);
     }
 
@@ -135,9 +138,10 @@ public abstract class SqliteBaseService<T extends SqliteBaseEntity, D extends Sq
 
     /**
      * 根据ID集合，批量删除功能
+     *
      * @return
      */
-    public int batchDeleteByIdList(List<Object> idList){
+    public int batchDeleteByIdList(List<Object> idList) {
         return this.baseDao.batchDeleteByIdList(idList);
     }
 
